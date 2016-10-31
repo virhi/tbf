@@ -1,0 +1,20 @@
+version: '2'
+services:
+  nginx:
+    links:
+      - php
+    build: ./docker/nginx
+    volumes:
+       - ./docker/nginx/host/host.template:/etc/nginx/conf.d/dev.template
+       - ./:/var/www/tbf/web
+    ports:
+      - "8080:80"
+    environment:
+      - NGINX_PORT=80
+      - NGINX_HOST_DEV=dev.tbf.local
+      - NGINX_ROOT_PATH=/var/www/tbf
+    command: /bin/bash -c "envsubst < /etc/nginx/conf.d/dev.template > /etc/nginx/conf.d/dev.conf && nginx -g 'daemon off;'"
+  php:
+    build: ./docker/php
+    volumes:
+      - ./:/var/www/tbf/web
